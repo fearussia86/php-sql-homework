@@ -124,9 +124,103 @@ WHERE cg.idGood = g.idGood
 GROUP BY cg.IdCart
 HAVING SUM(cg.amount*g.price) > 1000;
 
+SELECT * FROM cart_good;
+SELECT * FROM good;
+SELECT * FROM cart;
+
+#ДЗ НА ДОМ
+# Вывести сумму товаров, которых нет в корзине (например, 1). 
+
+SELECT SUM(cg.amount*g.price) AS res
+FROM cart_good cg, good g 
+WHERE cg.idGood = g.idGood
+AND idCart != 1; #Выводим все товары, кроме товаров не из первой корзины. 
+
+#Вывести товары, которых нет в корзине 1.
+# Вернуться к задаче чуть позже.
+SELECT g.name AS res
+FROM cart_good cg, good g 
+WHERE cg.idGood = g.idGood
+AND idCart !=1; #Выводим все товары, кроме товаров не из первой корзины. 
+
+# Средний чек по трем корзинам
+
+SELECT AVG(cg.amount*g.price) AS res 
+FROM cart_good cg, good g 
+WHERE cg.idGood = g.idGood
+AND idCart != 1;
+
+# Максимальный и минимальный чек 
+
+SELECT MIN(price) as min FROM good;
+
+SELECT MAX(price) as min FROM good;
+
+# Алиасы всегда прописываем и не забываем про GROUP BY 
+
+
+
+
+
+
+
+
+
 #Если сервер слабенький, то лучше сделать так, чтобы в базе делались расчеты
 # Если сервер сильный, то лучше на сервере делать. 
 # Либо можно посчитать в базе данных и закешировать результат
+
+
+
+# ТЕМА: ТРИГГЕРЫ
+# Триггеры - это функции, которые что-то делают, но ничего не возвращают, это код, который постоянно пишется, 
+#триггеры - это код, который постоянно работает. 
+#Триггер вызывать не надо, он будет срабатывать, когда произойдет нужное событие, которое мы зададим.
+#Триггер используется, чтобы автоматически обновлялись данные в таблице, либо велся учет. 
+
+#Синтаксис триггера
+DELIMITER $$
+
+CREATE TRIGGER имя_триггера
+	время_события тип_события ON имя_таблицы
+    FOR EACH ROW
+    BEGIN 
+		тело триггера;
+	END$$
+    DELIMITER ;
+    
+use library;
+
+select*from book;
+    
+    
+
+
+CREATE TRIGGER trigger_name
+Время_события: BEFOR | AFTER
+Тип_события: INSERT | UPDATE | DELETE 
+# Триггер может работать, когда произойдет один из 6 вариантов. Либо до либо после события будет происходить триггер.
+
+CREATE TABLE book_backup (
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    rowId INT UNSIGNED NOT NULL # UNSIGNED - база будет проверять, будет ли попадать ли сюда отрицательное значение 
+    # и не будет записывать его. Будет выводить ошибку SQL. 
+    
+)engine=InnoDB
+
+#Создаем триггер
+
+DELIMITER $$
+
+CREATE TRIGGER `book_delete_trigger` 
+BEFORE DELETE ON `book` 
+# ON - указывает на то, за какой таблицей должен следить триггер
+FOR EACH ROW 
+BEGIN 
+	INSERT INTO `book_backup` SET rowId = OLD.id, title = OLD.title
+    END$$
+    
+DELIMITER ;
 
 
 
